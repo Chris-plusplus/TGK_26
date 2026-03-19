@@ -1,0 +1,19 @@
+{
+	"cities": [
+		{
+			"bottom": 25,
+			"left": 25,
+			"length": 750
+		}
+	],
+
+	"maxAngleJerk": 5,
+	"maxAngleChange": 10,
+	"actorSpeed": 2,
+
+	"infectionRadius": 1,
+	"infectionChance": 0.1,
+	"initialInfected": 1,
+	"populationPerCity": 100000,
+	"timeToRemove": 100
+}
