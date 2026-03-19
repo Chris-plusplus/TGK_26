@@ -11,13 +11,14 @@ class ArchimedesTemplate(ConanFile):
 	}
 
 	default_options = {
-		'shared': False
+		'shared': False 
 	}
 
 	def requirements(self):
 		# require archimedes v0.1.1
-		self.requires('archimedes/0.1.1')
+		self.requires('archimedes/0.1.1')  
 		self.requires('nlohmann_json/3.12.0')
+		self.requires('box2d/3.1.1')
 
 	# define CMake layout
 	def layout(self):
