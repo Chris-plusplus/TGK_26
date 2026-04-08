@@ -12,7 +12,7 @@ int main() {
 		.windowWidth = (int)windowWidth,
 		.windowHeight = (int)windowHeight,
 		.windowTitle = "Epidemic Simulator",
-		.backgroundColor = arch::Color(1, 1, 1, 1),
+		.backgroundColor = arch::Color(0, 0.5, 1, 1),
 		.renderingApi = arch::gfx::RenderingAPI::Nvrhi_VK
 	};
 
