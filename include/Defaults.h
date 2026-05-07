@@ -37,3 +37,5 @@ extern UBO ubo;
 extern float2 cameraDelta;
 
 extern Ref<gfx::buffer::Buffer> ubobuf;
+
+extern float scale;

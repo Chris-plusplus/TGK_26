@@ -48,3 +48,5 @@ std::string defaultFragmentShader() {
 std::string defaultFontFragmentShader() {
 	return "shaders/text/fragment_atlas.glsl";
 }
+
+float scale = 1.f / 128.f;
