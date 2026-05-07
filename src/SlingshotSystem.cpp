@@ -1,4 +1,5 @@
 #include <SlingshotSystem.h>
+#include <CollisionSystem.h>
 #include <archimedes/Scene.h>
 #include <Defaults.h>
 #include <Utils.h>
@@ -108,6 +109,8 @@ void SlingshotSystem::update() {
 
 			slingshot.state = slingshot.waiting;
 			slingshot.canReloadTimePassed = 0;
+
+			domain.addComponent<Launched>(canEntity);
 		}
 	}
 }
