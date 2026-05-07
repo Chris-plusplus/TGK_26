@@ -8,7 +8,7 @@ using namespace arch;
 struct Explosion {
 	b2ExplosionDef explosionDef;
 	float damageModifier;
-	float timer;
+	float time;
 };
 
 struct ExplosionSystem {
