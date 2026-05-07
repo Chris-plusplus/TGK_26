@@ -1,4 +1,7 @@
-#include <CollisionDamageSystem.h>
+#include <CollisionSystem.h>
+#include <AccelerationSystem.h>
+#include <SlingshotSystem.h>
+#include <ExplosionSystem.h>
 #include <archimedes/Scene.h>
 #include <ScoreSystem.h>
 #include <box2d/box2d.h>
@@ -7,12 +10,12 @@
 
 using namespace arch;
 
-void CollisionDamageSystem::update() {
+void CollisionSystem::update() {
 	auto scene = scene::SceneManager::get()->currentScene();
 	auto&& domain = scene->domain();
 	auto&& world = domain.global<b2WorldWrapper>();
 
-	std::vector<std::tuple<ecs::Entity, b2BodyId>> toDestroy;
+	std::vector<ecs::Entity> toDestroy;
 	auto contactEvents = b2World_GetContactEvents(world.id);
 	for (auto&& event : std::ranges::subrange(
 		contactEvents.hitEvents,
@@ -36,28 +39,29 @@ void CollisionDamageSystem::update() {
 
 		float energyLoss = reducedMass * 0.5f * event.approachSpeed * event.approachSpeed * (1.f - e * e);
 
+		auto handleEntity = [&](ecs::Entity entity) {
+			auto hOpt = domain.tryGetComponent<Health>(entity);
+			if (hOpt and hOpt->value > 0) {
+				ScoreSystem::add(std::max(0.f, std::min(energyLoss, hOpt->value)));
+				if ((hOpt->value -= energyLoss) < 0) {
+					toDestroy.push_back(entity);
+				}
+			}
+
+			if (domain.hasComponent<Launched>(entity))
+				domain.addComponent<Collided>(entity);
+		};
+
 		auto eA = (ecs::Entity)(size_t)b2Body_GetUserData(bodyA);
 		auto eB = (ecs::Entity)(size_t)b2Body_GetUserData(bodyB);
 
-		auto hAOpt = domain.tryGetComponent<Health>(eA);
-		auto hBOpt = domain.tryGetComponent<Health>(eB);
-		if (hAOpt and hAOpt->value > 0) {
-			ScoreSystem::add(std::max(0.f, std::min(energyLoss, hAOpt->value)));
-			if ((hAOpt->value -= energyLoss) < 0) {
-				toDestroy.push_back({eA, bodyA});
-			}
-		}
-		if (hBOpt and hBOpt->value > 0) {
-			ScoreSystem::add(std::max(0.f, std::min(energyLoss, hBOpt->value)));
-			if ((hBOpt->value -= energyLoss) < 0) {
-				toDestroy.push_back({eB, bodyB});
-			}
-		}
+		handleEntity(eA);
+		handleEntity(eB);
 	}
-	for (auto&& [entity, body] : toDestroy) {
+	for (auto&& entity : toDestroy) {
 		if (domain.alive(entity)) {
+			b2DestroyBody(domain.getComponent<b2BodyId>(entity));
 			domain.kill(entity);
-			b2DestroyBody(body);
 		}
 	}
 }
