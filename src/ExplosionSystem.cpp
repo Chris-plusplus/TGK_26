@@ -1,16 +1,22 @@
 #include <ExplosionSystem.h>
 #include <SlingshotSystem.h>
 #include <ScoreSystem.h>
+#include <CollisionSystem.h>
 #include <b2World.h>
 #include <Defaults.h>
 #include <Health.h>
 
 void ExplosionSystem::update() {
-	if (input::Mouse::left.pressed()) {
-		std::vector<ecs::Entity> toDestroy;
-		auto&& domain = scene::SceneManager::get()->currentScene()->domain();
-		auto&& world = domain.global<b2WorldWrapper>();
-		for (auto&& [can, explosion, t, body, shape] : domain.view<Explosion, scene::components::TransformComponent, b2BodyId, b2ShapeId>(exclude<Can>).all()) {
+	std::vector<ecs::Entity> toDestroy;
+	auto&& domain = scene::SceneManager::get()->currentScene()->domain();
+	auto&& world = domain.global<b2WorldWrapper>();
+	for (auto&& [can, explosion, t, body, shape] : domain.view<Explosion, scene::components::TransformComponent, b2BodyId, b2ShapeId>(exclude<Can>).all()) {
+		bool timesUp = false;
+		if (auto c = domain.tryGetComponent<Collided>(can)) {
+			timesUp = explosion.time - c->timeSince < 0;
+		}
+
+		if (input::Mouse::left.pressed() or timesUp) {
 			explosion.explosionDef.position = b2Vec2{t.position.x * scale, t.position.y * scale};
 
 			struct VelocityState {
