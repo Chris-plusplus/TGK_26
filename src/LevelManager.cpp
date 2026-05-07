@@ -106,27 +106,6 @@ void updateScale(Scene& scene, Entity entity) {
 	}
 }
 
-//void parseTempCan(Scene& scene, Json& json) {
-//	auto can = scene.newEntity();
-//	can.addComponent<LevelEntity>();
-//	auto&& world = scene.domain().global<b2WorldWrapper>();
-//
-//	auto prefabName = json["prefab"];
-//	if (prefabName.is_null()) {
-//		Logger::error("no prefab for can");
-//		return;
-//	}
-//	applyPrefab(world.id, can, prefabName);
-//
-//	parsePosition(scene, can, json);
-//	updateScale(scene, can);
-//	parseRotation(scene, can, json);
-//
-//	can.addComponent<Can>(&*FxPrefabManager::get(prefabName));
-//
-//	can.addComponent<int>();
-//}
-
 void parseExplosion(Entity can, Json& json) {
 	if (json.is_null()) {
 		return;
@@ -138,8 +117,9 @@ void parseExplosion(Entity can, Json& json) {
 	expl.explosionDef.falloff = json.value("falloff", 1.f) * scale;
 	expl.explosionDef.impulsePerLength = json.value("strength", 1.f);
 	expl.damageModifier = json.value("damageModifier", 1.f);
+	expl.timer = json.value("time", 0.f);
 
-	auto layers = json["layers"];
+	auto& layers = json["layers"];
 	if (layers.size() == 0) {
 		expl.explosionDef.maskBits = SIZE_MAX;
 	} else {
@@ -162,7 +142,7 @@ void parseCans(Scene& scene, Json& json) {
 	for (auto&& canJson : json) {
 		auto&& world = scene.domain().global<b2WorldWrapper>();
 
-		auto prefabName = canJson["prefab"];
+		auto& prefabName = canJson["prefab"];
 		if (prefabName.is_null()) {
 			Logger::error("no prefab for can");
 			return;
@@ -248,7 +228,7 @@ void parseWalls(Scene& scene, Json& json) {
 		auto block = scene.newEntity();
 		block.addComponent<LevelEntity>();
 
-		auto prefabName = b["prefab"];
+		auto& prefabName = b["prefab"];
 		if (prefabName.is_null()) {
 			Logger::error("no prefab for can");
 			return;
