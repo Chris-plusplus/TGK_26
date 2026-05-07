@@ -117,7 +117,7 @@ void parseExplosion(Entity can, Json& json) {
 	expl.explosionDef.falloff = json.value("falloff", 1.f) * scale;
 	expl.explosionDef.impulsePerLength = json.value("strength", 1.f);
 	expl.damageModifier = json.value("damageModifier", 1.f);
-	expl.timer = json.value("time", 0.f);
+	expl.time = json.value("time", 0.f);
 
 	auto& layers = json["layers"];
 	if (layers.size() == 0) {
