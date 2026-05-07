@@ -51,12 +51,7 @@ void ScoreSystem::setup() {
 	auto tr = text.topRight(tmat);
 	auto winSize = gfx::Renderer::current()->getWindow()->getSize();
 
-	Logger::debug("{}", glm::to_string(text.topRight()));
-	Logger::debug("{}", glm::to_string(t.getTransformMatrix()));
-	Logger::debug("{}", glm::to_string(t.getTransformMatrix() * float4 { text.topRight(), 1 }));
-	Logger::debug("{}", glm::to_string(tr));
 	t.position = {0, winSize.y - tr.y, -0.9};
-	Logger::debug("{}", glm::to_string(t.getTransformMatrix()));
 
 	score.addComponent<ScoreData>();
 }
@@ -78,12 +73,6 @@ void ScoreSystem::update() {
 		auto tr = text.topRight(tmat);
 		auto size = tr - bl;
 		t.position.x = gfx::Renderer::current()->getWindow()->getSize().x - size.x;
-
-		Logger::debug("{}", glm::to_string(tmat));
-		Logger::debug("{}", glm::to_string(bl));
-		Logger::debug("{}", glm::to_string(tr));
-		Logger::debug("{}", glm::to_string(size));
-		Logger::debug("{}", glm::to_string(t.position));
 
 		break;
 	}
