@@ -66,3 +66,11 @@ Ref<gfx::pipeline::Pipeline> makePipeline(
 		}
 	);
 }
+
+math::Quat angleToQuat(f32 angle) {
+	return glm::angleAxis(angle, float3{0.f, 0.f, 1.f});
+}
+
+void syncBodyToTransform(b2BodyId body, const scene::components::TransformComponent& t) {
+	b2Body_SetTransform(body, b2Vec2{t.position.x * scale, t.position.y * scale}, b2Body_GetRotation(body));
+}
