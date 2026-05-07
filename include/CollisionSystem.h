@@ -1,7 +1,7 @@
 #pragma once
 
 struct Collided {
-	static constexpr bool flagComponent = true;
+	float timeSince;
 };
 
 struct CollisionSystem {

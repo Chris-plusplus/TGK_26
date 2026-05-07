@@ -15,6 +15,10 @@ void CollisionSystem::update() {
 	auto&& domain = scene->domain();
 	auto&& world = domain.global<b2WorldWrapper>();
 
+	for (auto&& [collided] : domain.view<Collided>().components()) {
+		collided.timeSince += world.deltaTime;
+	}
+
 	std::vector<ecs::Entity> toDestroy;
 	auto contactEvents = b2World_GetContactEvents(world.id);
 	for (auto&& event : std::ranges::subrange(
@@ -49,7 +53,7 @@ void CollisionSystem::update() {
 			}
 
 			if (domain.hasComponent<Launched>(entity))
-				domain.addComponent<Collided>(entity);
+				domain.addComponent<Collided>(entity, 0);
 		};
 
 		auto eA = (ecs::Entity)(size_t)b2Body_GetUserData(bodyA);
