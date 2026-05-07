@@ -1,0 +1,15 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": "textures/smashed_can.png",
+	"shape": {
+		"layer": 1,
+		"type": "circle",
+		"radius": 50,
+		"material": {
+			"restitution": 0.5
+		},
+		"density": 2
+	}
+}
