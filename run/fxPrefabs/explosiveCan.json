@@ -1,0 +1,24 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": "textures/particle.png",
+	"shape": {
+		"layer": 1,
+		"type": "circle",
+		"radius": 40,
+		"material": {
+			"restitution": 0.5
+		},
+		"density": 2
+	},
+	"explosion": {
+		"radius": 300,
+		"fallof": 300,
+		"strength": 1,
+		"damageModifier": 0.2,
+		"layers": [
+			2
+		]
+	}
+}
