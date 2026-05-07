@@ -28,6 +28,10 @@ struct CanOnSlingshot {
 	float3 posBegin = {};
 };
 
+struct Launched {
+	static constexpr bool flagComponent = true;
+};
+
 struct SlingshotSystem {
 	static Entity placeSlingshot(float2 pos);
 	static void moveCanStep(float dt);
