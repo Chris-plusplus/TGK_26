@@ -27,7 +27,7 @@
 #include <ExplosionSystem.h>
 #include <AccelerationSystem.h>
 #include <ScoreSystem.h>
-#include <CollisionDamageSystem.h>
+#include <CollisionSystem.h>
 
 using namespace std::chrono_literals;
 
@@ -122,10 +122,11 @@ void SimulatorApp::update() {
 	std::this_thread::sleep_for(decltype(0.s)(1.0 / 120 - deltaTime.count()));
 
 	auto dt = 1.0 / 120;// std::min<float>(deltaTime.count(), 1.0 / 60);
+	world.deltaTime = dt;
 
 	b2World_Step(world.id, dt, 8);
 
-	CollisionDamageSystem::update();
+	CollisionSystem::update();
 
 	for (auto&& [entity, bodyId, t] : domain.view<b2BodyId, scene::components::TransformComponent>().all()) {
 		auto bodyPos = b2Body_GetPosition(bodyId);
