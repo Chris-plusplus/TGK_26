@@ -28,6 +28,7 @@
 #include <AccelerationSystem.h>
 #include <ScoreSystem.h>
 #include <CollisionSystem.h>
+#include <DespawnSystem.h>
 
 using namespace std::chrono_literals;
 
@@ -149,4 +150,6 @@ void SimulatorApp::update() {
 	AccelerationSystem::update();
 
 	ScoreSystem::update();
+
+	DespawnSystem::update();
 }
