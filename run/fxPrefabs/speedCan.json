@@ -8,9 +8,12 @@
 		"type": "circle",
 		"radius": 40,
 		"material": {
-			"restitution": 0.5
+			"restitution": 0.5,
+			"rollingResistance": 0.02
 		},
 		"density": 2
 	},
-	"acceleration": 20
+	"acceleration": 20,
+
+	"points": 10000
 }

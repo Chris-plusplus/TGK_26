@@ -11,5 +11,7 @@
 			"restitution": 0.5
 		},
 		"density": 2
-	}
+	},
+
+	"points": 10000
 }

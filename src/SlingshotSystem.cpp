@@ -52,10 +52,9 @@ void SlingshotSystem::moveCanStep(float dt) {
 				canos.posBegin = t.position;
 
 				auto body = domain.getComponent<b2BodyId>(canEntity);
-				b2Body_SetAwake(body, false);
+				b2Body_SetType(body, b2_staticBody);
 			} else {
-				slingshot.state = slingshot.lost;
-				Logger::critical("you lost :(");
+				slingshot.state = slingshot.empty;
 			}
 		}
 	} else if (slingshot.state == slingshot.reloading) {
@@ -65,10 +64,9 @@ void SlingshotSystem::moveCanStep(float dt) {
 
 		t.position = glm::mix(canos.posBegin, slingshot.centerPos, canos.progress);
 		syncBodyToTransform(body, t);
-		b2Body_SetAwake(body, false);
+		b2Body_SetType(body, b2_staticBody);
 		if (canos.progress == 1) {
 			slingshot.state = slingshot.loaded;
-			Logger::debug("loaded");
 		}
 	}
 }
@@ -99,8 +97,9 @@ void SlingshotSystem::update() {
 
 			t.position = slingshot.centerPos + dpos;
 			syncBodyToTransform(body, t);
-			b2Body_SetAwake(body, false);
+			b2Body_SetType(body, b2_staticBody);
 		} else if (input::Mouse::left.released()) {
+			b2Body_SetType(body, b2_dynamicBody);
 			auto force = b2Body_GetMass(body) * slingshot.forceMultiplier * (b2Vec2{slingshot.centerPos.x * scale, slingshot.centerPos.y * scale} - b2Body_GetPosition(body));
 
 			b2Body_ApplyLinearImpulseToCenter(body, force, true);

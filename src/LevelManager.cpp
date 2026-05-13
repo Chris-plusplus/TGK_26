@@ -3,7 +3,7 @@
 #include <Utils.h>
 #include <archimedes/Scene.h>
 #include <ranges>
-#include <Health.h>
+#include <DestructionSystem.h>
 #include <SlingshotSystem.h>
 #include <FxPrefabManager.h>
 #include <nlohmann/json.hpp>
@@ -18,6 +18,9 @@
 #include <b2World.h>
 #include <ExplosionSystem.h>
 #include <AccelerationSystem.h>
+#include <DragonSystem.h>
+#include <EndingSystem.h>
+#include <ScoreSystem.h>
 
 using namespace arch;
 
@@ -38,13 +41,13 @@ void applyPrefab(b2WorldId world, Entity entity, const FxPrefab& prefab) {
 	}
 	b2Shape_SetUserData(shape, (void*)entity.handle());
 
-	if (prefab.healthDataOpt) {
-		auto&& healthData = *prefab.healthDataOpt;
+	if (prefab.destrDataOpt) {
+		auto&& destrData = *prefab.destrDataOpt;
 
-		if (healthData.relative) {
-			entity.addComponent<Health>(healthData.value * b2Body_GetMass(body));
+		if (destrData.relativeHealth) {
+			entity.addComponent<Destructible>(destrData.health * b2Body_GetMass(body), destrData.destructionPoints);
 		} else {
-			entity.addComponent<Health>(healthData.value);
+			entity.addComponent<Destructible>(destrData.health, destrData.destructionPoints);
 		}
 	}
 
@@ -138,6 +141,12 @@ void parseAcceleration(Entity can, Json& json) {
 	can.addComponent<Acceleration>(json.get<float>());
 }
 
+void parseDragon(Entity dragon, Json json) {
+	if (not json.is_null()) {
+		dragon.addComponent<Dragon>();
+	}
+}
+
 void parseCans(Scene& scene, Json& json) {
 	for (auto&& canJson : json) {
 		auto&& world = scene.domain().global<b2WorldWrapper>();
@@ -170,7 +179,7 @@ void parseCans(Scene& scene, Json& json) {
 		auto accJson = prefab.json.value("acceleration", Json());
 		parseAcceleration(can, accJson);
 
-		can.addComponent<Can>(&*FxPrefabManager::get(prefabName));
+		can.addComponent<Can>(&*FxPrefabManager::get(prefabName), prefab.json.value("points", 0.f));
 	}
 }
 
@@ -183,6 +192,8 @@ void parseObjects(Scene& scene, Json& json) {
 			auto object = scene.newEntity();
 			object.addComponent<LevelEntity>();
 
+			const FxPrefab* prefab = nullptr;
+
 			auto& objectPrefabName = objectJson["prefab"];
 			if (objectPrefabName.is_null()) {
 				if (prefabName.empty()) {
@@ -190,14 +201,18 @@ void parseObjects(Scene& scene, Json& json) {
 					continue;
 				} else {
 					applyPrefab(world.id, object, prefabName);
+					prefab = &*FxPrefabManager::get(prefabName);
 				}
 			} else {
 				applyPrefab(world.id, object, objectPrefabName);
+				prefab = &*FxPrefabManager::get(objectPrefabName);
 			}
 
 			parsePosition(scene, object, objectJson);
 			updateScale(scene, object);
 			parseRotation(scene, object, objectJson);
+
+			parseDragon(object, prefab->json.value("dragon", Json()));
 		}
 	}
 
@@ -257,6 +272,11 @@ void parseSlingshot(Json& json) {
 	);
 }
 
+struct LevelData {
+	std::string current;
+	std::string next;
+};
+
 void LevelManager::loadLevel(std::string_view filename) {
 	clearLevel();
 	auto json = Json::parse(std::ifstream(filename.data()));
@@ -268,9 +288,24 @@ void LevelManager::loadLevel(std::string_view filename) {
 	parseCans(scene, json["cans"]);
 	parseSlingshot(json["slingshot"]);
 	parseObjects(scene, json["objects"]);
+
+	domain.global<LevelData>().current = filename;
+	domain.global<LevelData>().next = json.value("next", "");
+
+	domain.global<LevelState>() = LevelState::playing;
+}
+
+void LevelManager::nextLevel() {
+	loadLevel(scene::SceneManager::get()->currentScene()->domain().global<LevelData>().next);
+}
+
+void LevelManager::reloadLevel() {
+	loadLevel(scene::SceneManager::get()->currentScene()->domain().global<LevelData>().current);
 }
 
 void LevelManager::clearLevel() {
+	ScoreSystem::reset();
+
 	auto&& domain = scene::SceneManager::get()->currentScene()->domain();
 	auto toKill = domain.view<LevelEntity>() | std::ranges::to<std::vector>();
 	for (auto e : toKill) {

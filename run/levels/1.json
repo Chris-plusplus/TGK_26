@@ -1,0 +1,113 @@
+{
+	"next": "levels/2.json",
+
+	"slingshot": {
+		"position": [ 200, 200 ],
+		"maxPull": 150,
+		"forceMultiplier": 10.0,
+		"canReloadTime": 0.5
+	},
+
+	"cans": [
+		{
+			"prefab": "explosiveCan",
+			"position": [ 300, 150 ]
+		},
+		{
+			"prefab": "speedCan",
+			"position": [ 420, 150 ]
+		},
+		{
+			"prefab": "speedCan",
+			"position": [ 540, 150 ]
+		}
+	],
+
+	"objects": {
+		"bottomPlanks": {
+			"prefab": "plank",
+			"objects": [
+				{
+					"position": [ 1350, 75 ]
+				},
+				{
+					"position": [ 1490, 75 ]
+				},
+				{
+					"position": [ 1630, 75 ]
+				}
+			]
+		},
+		"bottomSupportPlanks": {
+			"prefab": "plank",
+			"objects": [
+				{
+					"position": [ 1425, 245 ]
+				},
+				{
+					"position": [ 1555, 245 ]
+				}
+			]
+		},
+		"topPlanks": {
+			"prefab": "plank",
+			"objects": [
+				{
+					"position": [ 1415, 160 ],
+					"rotation": 90
+				},
+				{
+					"position": [ 1565, 160 ],
+					"rotation": 90
+				}
+			]
+		},
+		"topSupportPlanks": {
+			"prefab": "plank",
+			"objects": [
+				{
+					"position": [ 1490, 330 ],
+					"rotation": 90
+				}
+			]
+		},
+		"testBlock": {
+			"prefab": "dragon",
+			"objects": [
+				{
+					"position": [ 1490, 390 ]
+				}
+			]
+		},
+		"hWalls": {
+			"prefab": "testWallGround",
+			"objects": [
+				{
+					"position": [ 900, -50 ]
+				},
+				{
+					"position": [ 900, 850 ]
+				}
+			]
+		},
+		"vWalls": {
+			"prefab": "testWallSide",
+			"objects": [
+				{
+					"position": [ 1850, 400 ]
+				},
+				{
+					"position": [ -50, 400 ]
+				}
+			]
+		},
+		"blockers": {
+			"prefab": "blocker",
+			"objects": [
+				{
+					"position": [ 900, -100 ]
+				}
+			]
+		}
+	}
+}

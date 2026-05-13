@@ -74,3 +74,9 @@ math::Quat angleToQuat(f32 angle) {
 void syncBodyToTransform(b2BodyId body, const scene::components::TransformComponent& t) {
 	b2Body_SetTransform(body, b2Vec2{t.position.x * scale, t.position.y * scale}, b2Body_GetRotation(body));
 }
+
+bool isMoving(b2BodyId body) {
+	constexpr auto eps = std::numeric_limits<float>::epsilon();
+	auto vel = b2Body_GetLinearVelocity(body);
+	return glm::abs(vel.x) >= eps or glm::abs(vel.y) >= eps or glm::abs(b2Body_GetAngularVelocity(body)) >= eps;
+}

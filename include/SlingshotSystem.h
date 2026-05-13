@@ -13,13 +13,14 @@ struct Slingshot {
 		waiting,
 		reloading,
 		loaded,
-		lost,
+		empty,
 		dragged
 	} state = waiting;
 };
 
 struct Can {
 	const FxPrefab* prefab;
+	float points = 0;
 };
 
 struct CanOnSlingshot {

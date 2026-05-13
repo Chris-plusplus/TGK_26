@@ -22,13 +22,14 @@
 #include <b2World.h>
 #include <Button.h>
 #include <LevelManager.h>
-#include <Health.h>
+#include <DestructionSystem.h>
 #include <SlingshotSystem.h>
 #include <ExplosionSystem.h>
 #include <AccelerationSystem.h>
 #include <ScoreSystem.h>
 #include <CollisionSystem.h>
 #include <DespawnSystem.h>
+#include <EndingSystem.h>
 
 using namespace std::chrono_literals;
 
@@ -102,7 +103,7 @@ void SimulatorApp::init() {
 	auto worldId = b2CreateWorld(&worldDef);
 	auto&& world = domain.global<b2WorldWrapper>(worldId, scale, 0.f);
 
-	LevelManager::loadLevel("levels/test.json");
+	LevelManager::loadLevel("levels/1.json");
 
 	ScoreSystem::setup();
 }
@@ -127,8 +128,6 @@ void SimulatorApp::update() {
 
 	b2World_Step(world.id, dt, 8);
 
-	CollisionSystem::update();
-
 	for (auto&& [entity, bodyId, t] : domain.view<b2BodyId, scene::components::TransformComponent>().all()) {
 		auto bodyPos = b2Body_GetPosition(bodyId);
 		auto bodyRot = b2Body_GetRotation(bodyId);
@@ -142,14 +141,24 @@ void SimulatorApp::update() {
 	SlingshotSystem::update();
 
 	if (input::Keyboard::esc.pressed()) {
-		ScoreSystem::reset();
-		LevelManager::loadLevel("levels/test.json");
+		if (input::Keyboard::esc.shift()) {
+			LevelManager::loadLevel("levels/1.json");
+		} else {
+			LevelManager::reloadLevel();
+		}
 	}
 
+	if (input::Keyboard::arrowRight.pressed()) {
+		LevelManager::nextLevel();
+	}
+
+	CollisionSystem::update();
 	ExplosionSystem::update();
 	AccelerationSystem::update();
 
 	ScoreSystem::update();
 
 	DespawnSystem::update();
+
+	EndingSystem::update();
 }

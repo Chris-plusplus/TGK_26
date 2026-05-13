@@ -3,15 +3,11 @@
 #include <archimedes/Scene.h>
 #include <box2d/box2d.h>
 #include <nlohmann/json.hpp>
+#include <DestructionSystem.h>
 
 using namespace arch;
 
 using Json = nlohmann::json;
-
-struct HealthData {
-	float value;
-	bool relative;
-};
 
 struct PolygonData {
 	b2Polygon x;
@@ -25,7 +21,7 @@ struct FxPrefab {
 		b2Circle circle;
 		b2Polygon polygon;
 	} shapeData;
-	std::optional<HealthData> healthDataOpt;
+	std::optional<DestructibleData> destrDataOpt;
 	Ref<gfx::pipeline::Pipeline> texture;
 	std::string name;
 

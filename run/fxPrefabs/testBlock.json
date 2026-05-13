@@ -14,5 +14,8 @@
 		},
 		"density": 10
 	},
-	"healthMass": 80
+	"destructible": {
+		"healthMass": 50,
+		"destructionPoints": 100
+	}
 }

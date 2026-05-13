@@ -3,17 +3,21 @@
 		"position": [ 200, 200 ],
 		"maxPull": 150,
 		"forceMultiplier": 10.0,
-		"canReloadTime": 0.5
+		"canReloadTime": 1
 	},
 
 	"cans": [
 		{
 			"prefab": "explosiveCan",
-			"position": [ 450, 150 ]
+			"position": [ 300, 150 ]
 		},
 		{
 			"prefab": "speedCan",
-			"position": [ 300, 150 ]
+			"position": [ 420, 150 ]
+		},
+		{
+			"prefab": "speedCan",
+			"position": [ 540, 150 ]
 		}
 	],
 
@@ -66,7 +70,7 @@
 			]
 		},
 		"testBlock": {
-			"prefab": "testBlock",
+			"prefab": "dragon",
 			"objects": [
 				{
 					"position": [ 1490, 390 ]

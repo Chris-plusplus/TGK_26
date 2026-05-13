@@ -1,0 +1,20 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": [ 0, 0.75, 0, 1 ],
+	"shape": {
+		"layer": 2,
+		"type": "circle",
+		"radius": 50,
+		"material": {
+			"restitution": 0.75
+		},
+		"density": 5
+	},
+	"destructible": {
+		"healthMass": 10,
+		"destructionPoints": 5000
+	},
+	"dragon": true
+}

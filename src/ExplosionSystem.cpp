@@ -4,7 +4,7 @@
 #include <CollisionSystem.h>
 #include <b2World.h>
 #include <Defaults.h>
-#include <Health.h>
+#include <DestructionSystem.h>
 
 void ExplosionSystem::update() {
 	std::vector<ecs::Entity> toDestroy;
@@ -23,22 +23,18 @@ void ExplosionSystem::update() {
 				ecs::Entity entity;
 				b2BodyId body;
 				b2Vec2 vel;
-				Health* health;
+				Destructible* health;
 			};
 
 			std::vector<VelocityState> state;
 
-			for (auto&& [entity, body, h] : domain.view<b2BodyId, Health>().all()) {
+			for (auto&& [entity, body, h] : domain.view<b2BodyId, Destructible>().all()) {
 				state.emplace_back(entity, body, b2Body_GetLinearVelocity(body), &h);
 			}
 
 			b2World_Explode(world.id, &explosion.explosionDef);
 
-			for (auto&& [entity, body, vel, health] : state) {
-				if (health->value < 0) {
-					continue;
-				}
-
+			for (auto&& [entity, body, vel, destructible] : state) {
 				auto velDiff = b2Body_GetLinearVelocity(body) - vel;
 
 				auto mass = b2Body_GetMass(body);
@@ -49,15 +45,7 @@ void ExplosionSystem::update() {
 					continue;
 				}
 
-				ScoreSystem::add(std::min(energy, health->value));
-				if ((health->value -= energy) <= 0.f) {
-					toDestroy.push_back(entity);
-				}
-			}
-
-			for (auto&& entity : toDestroy) {
-				b2DestroyBody(domain.getComponent<b2BodyId>(entity));
-				domain.kill(entity);
+				destructible->damage += energy;
 			}
 
 			b2DestroyBody(body);
@@ -65,4 +53,5 @@ void ExplosionSystem::update() {
 			break;
 		}
 	}
+	DestructionSystem::update();
 }

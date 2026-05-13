@@ -40,3 +40,5 @@ using UnorderedMapString = std::unordered_map<std::string, T, StringViewHasher, 
 math::Quat angleToQuat(f32 angle);
 
 void syncBodyToTransform(b2BodyId body, const scene::components::TransformComponent& t);
+
+bool isMoving(b2BodyId body);

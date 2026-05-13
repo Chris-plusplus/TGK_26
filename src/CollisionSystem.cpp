@@ -6,7 +6,7 @@
 #include <ScoreSystem.h>
 #include <box2d/box2d.h>
 #include <b2World.h>
-#include <Health.h>
+#include <DestructionSystem.h>
 
 using namespace arch;
 
@@ -19,7 +19,6 @@ void CollisionSystem::update() {
 		collided.timeSince += world.deltaTime;
 	}
 
-	std::vector<ecs::Entity> toDestroy;
 	auto contactEvents = b2World_GetContactEvents(world.id);
 	for (auto&& event : std::ranges::subrange(
 		contactEvents.hitEvents,
@@ -44,12 +43,8 @@ void CollisionSystem::update() {
 		float energyLoss = reducedMass * 0.5f * event.approachSpeed * event.approachSpeed * (1.f - e * e);
 
 		auto handleEntity = [&](ecs::Entity entity) {
-			auto hOpt = domain.tryGetComponent<Health>(entity);
-			if (hOpt and hOpt->value > 0) {
-				ScoreSystem::add(std::max(0.f, std::min(energyLoss, hOpt->value)));
-				if ((hOpt->value -= energyLoss) < 0) {
-					toDestroy.push_back(entity);
-				}
+			if (auto dOpt = domain.tryGetComponent<Destructible>(entity)) {
+				dOpt->damage += energyLoss;
 			}
 
 			if (domain.hasComponent<Launched>(entity))
@@ -62,10 +57,5 @@ void CollisionSystem::update() {
 		handleEntity(eA);
 		handleEntity(eB);
 	}
-	for (auto&& entity : toDestroy) {
-		if (domain.alive(entity)) {
-			b2DestroyBody(domain.getComponent<b2BodyId>(entity));
-			domain.kill(entity);
-		}
-	}
+	DestructionSystem::update();
 }

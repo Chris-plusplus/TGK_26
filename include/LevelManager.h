@@ -10,5 +10,7 @@ struct LevelEntity {
 
 struct LevelManager {
 	static void loadLevel(std::string_view levelName);
+	static void reloadLevel();
+	static void nextLevel();
 	static void clearLevel();
 };

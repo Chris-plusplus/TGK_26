@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 #include <Defaults.h>
 #include <Utils.h>
+#include <DestructionSystem.h>
 
 using Json = nlohmann::json;
 
@@ -90,18 +91,30 @@ auto parseTexture(Json& json) {
 	}
 }
 
-std::optional<HealthData> parseHealth(Json& json) {
-	auto fixedHealth = json["health"];
+std::optional<DestructibleData> parseDestructible(Json& json) {
+	if (json.is_null()) {
+		return std::nullopt;
+	}
+
+	DestructibleData data;
+
+	auto& fixedHealth = json["health"];
 	if (not fixedHealth.is_null()) {
-		return HealthData{fixedHealth, false};
+		data.health = fixedHealth;
+		data.relativeHealth = false;
 	} else {
-		auto healthMass = json["healthMass"];
+		auto& healthMass = json["healthMass"];
 		if (not healthMass.is_null()) {
-			return HealthData{(float)healthMass, true};
+			data.health = healthMass;
+			data.relativeHealth = true;
 		} else {
 			return std::nullopt;
 		}
 	}
+
+	data.destructionPoints = json.value("destructionPoints", 0.f);
+
+	return data;
 }
 
 auto handleShapeType(Json& json, FxPrefab& prefab) {
@@ -132,7 +145,7 @@ auto& loadPrefab(std::string_view name) {
 	prefab.bodyDef = parseBody(prefab.json["body"]);
 	prefab.shapeDef = parseShape(prefab.json["shape"]);
 	prefab.shapeType = parseShapeType(prefab.json["shape"]);
-	prefab.healthDataOpt = parseHealth(prefab.json);
+	prefab.destrDataOpt = parseDestructible(prefab.json["destructible"]);
 	handleShapeType(prefab.json["shape"], prefab);
 	prefab.texture = makePipeline(parseTexture(prefab.json));
 	prefab.name = name;
