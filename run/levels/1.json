@@ -39,7 +39,7 @@
 			]
 		},
 		"bottomSupportPlanks": {
-			"prefab": "plank",
+			"prefab": "stonePlank",
 			"objects": [
 				{
 					"position": [ 1425, 245 ]
@@ -63,7 +63,7 @@
 			]
 		},
 		"topSupportPlanks": {
-			"prefab": "plank",
+			"prefab": "stonePlank",
 			"objects": [
 				{
 					"position": [ 1490, 330 ],

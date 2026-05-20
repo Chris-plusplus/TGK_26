@@ -1,0 +1,20 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": [ 0.5, 0.5, 0.5, 1 ],
+	"shape": {
+		"layer": 2,
+		"type": "box",
+		"width": 20,
+		"height": 150,
+		"material": {
+			"restitution": 0.75
+		},
+		"density": 10
+	},
+	"destructible": {
+		"healthMass": 50,
+		"destructionPoints": 100
+	}
+}
