@@ -138,7 +138,12 @@ void parseAcceleration(Entity can, Json& json) {
 		return;
 	}
 
-	can.addComponent<Acceleration>(json.get<float>());
+	Ref<gfx::pipeline::Pipeline> textureOnHit = nullptr;
+	if (auto found = json.find("textureOnHit"); found != json.end()) {
+		textureOnHit = makePipeline(loadTexture(found.value()));
+	}
+
+	can.addComponent<Acceleration>(json.value("value", 0.f), std::move(textureOnHit));
 }
 
 void parseDragon(Entity dragon, Json json) {
