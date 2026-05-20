@@ -14,7 +14,10 @@ void AccelerationSystem::update() {
 			break;
 		} else if (input::Mouse::left.pressed()) {
 			b2Body_SetLinearVelocity(body, acc.value * b2Normalize(b2Body_GetLinearVelocity(body)));
-			domain.removeComponent<Acceleration>(can);
+			auto tex = std::move(domain.removeComponent<Acceleration>(can, moveFlag).textureOnHit);
+			if (tex) {
+				domain.getComponent<scene::components::MeshComponent>(can).pipeline = std::move(tex);
+			}
 			break;
 		}
 	}
