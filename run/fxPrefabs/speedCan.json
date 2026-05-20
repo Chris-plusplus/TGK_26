@@ -13,7 +13,10 @@
 		},
 		"density": 2
 	},
-	"acceleration": 20,
+	"acceleration": {
+		"value": 20,
+		"textureOnHit": "textures/acceleratingCanSmashed.png"
+	},
 
 	"points": 10000
 }
