@@ -2,11 +2,11 @@
 	"body": {
 		"type": "dynamic"
 	},
-	"texture": "textures/smashed_can.png",
+	"texture": "textures/smashedCan.png",
 	"shape": {
 		"layer": 1,
 		"type": "circle",
-		"radius": 50,
+		"radius": 40,
 		"material": {
 			"restitution": 0.5
 		},
