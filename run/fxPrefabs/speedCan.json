@@ -2,7 +2,7 @@
 	"body": {
 		"type": "dynamic"
 	},
-	"texture": "textures/smashed_can.png",
+	"texture": "textures/acceleratingCan.png",
 	"shape": {
 		"layer": 1,
 		"type": "circle",
