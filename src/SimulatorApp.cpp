@@ -13,6 +13,7 @@
 #include <numbers>
 #include <Textures.h>
 #include <States.h>
+#include <glm/gtx/string_cast.hpp>
 #include <box2d/base.h>
 #include <box2d/box2d.h>
 #include <box2d/collision.h>
@@ -30,6 +31,7 @@
 #include <CollisionSystem.h>
 #include <DespawnSystem.h>
 #include <EndingSystem.h>
+#include <CanAngleSystem.h>
 
 using namespace std::chrono_literals;
 
@@ -139,6 +141,8 @@ void SimulatorApp::update() {
 
 	SlingshotSystem::moveCanStep(dt);
 	SlingshotSystem::update();
+	CollisionSystem::update();
+	CanAngleSystem::update();
 
 	if (input::Keyboard::esc.pressed()) {
 		if (input::Keyboard::esc.shift()) {
@@ -152,7 +156,6 @@ void SimulatorApp::update() {
 		LevelManager::nextLevel();
 	}
 
-	CollisionSystem::update();
 	ExplosionSystem::update();
 	AccelerationSystem::update();
 
