@@ -1,0 +1,8 @@
+{
+	"repeatButton": {
+		"position": [ 100, 980, -0.99 ],
+		"size": [ 100, 100 ],
+		"keycode": [ 82 ],
+		"texture": "textures/repeatButton.png"
+	}
+}

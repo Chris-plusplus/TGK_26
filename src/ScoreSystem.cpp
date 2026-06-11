@@ -42,14 +42,14 @@ void ScoreSystem::setup() {
 	auto&& text = score.addComponent(
 		text::TextComponent(
 			std::u32string(U"dupa"),
-			{defaultUniformBuffer()},
-			font::FontDB::get()["Arial"]->regular().get()
+			{screenUniformBuffer()},
+			font::FontDB::get()["Minecraft"]->regular().get()
 		)
 	);
 
 	auto tmat = t.getTransformMatrix();
 	auto tr = text.topRight(tmat);
-	auto winSize = gfx::Renderer::current()->getWindow()->getSize();
+	auto winSize = gfx::Renderer::current()->getWindow()->size();
 
 	t.position = {0, winSize.y - tr.y, -0.9};
 
@@ -65,14 +65,14 @@ void ScoreSystem::update() {
 
 		text = text::TextComponent(
 			std::u32string(std::from_range, std::format("Score: {:.2f}", score.value)),
-			{defaultUniformBuffer()},
-			font::FontDB::get()["Arial"]->regular().get()
+			{screenUniformBuffer()},
+			font::FontDB::get()["Minecraft"]->regular().get()
 		);
 		auto tmat = t.getTransformMatrix();
 		auto bl = text.bottomLeftAdjusted(tmat);
 		auto tr = text.topRight(tmat);
 		auto size = tr - bl;
-		t.position.x = gfx::Renderer::current()->getWindow()->getSize().x - size.x;
+		t.position.x = gfx::Renderer::current()->getWindow()->size().x - size.x;
 
 		break;
 	}

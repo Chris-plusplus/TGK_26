@@ -2,19 +2,20 @@
 	"body": {
 		"type": "dynamic"
 	},
-	"texture": [ 0.561, 0.349, 0.173, 1 ],
+	"texture": "textures/plank.png",
 	"shape": {
 		"layer": 2,
 		"type": "box",
-		"width": 20,
-		"height": 150,
+		"width": 120,
+		"height": 20,
 		"material": {
-			"restitution": 0.75
+			"restitution": 0.75,
+			"friction": 10
 		},
-		"density": 2
+		"density": 3
 	},
 	"destructible": {
-		"healthMass": 35,
+		"healthMass": 25,
 		"destructionPoints": 100
 	}
 }

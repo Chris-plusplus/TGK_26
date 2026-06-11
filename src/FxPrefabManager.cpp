@@ -76,21 +76,6 @@ auto parseShapeType(Json& json) {
 	return bodyTypes[val];
 }
 
-auto parseTexture(Json& json) {
-	auto textureData = json["texture"];
-	if (textureData.is_array()) {
-		Color color;
-		color.r = textureData[0];
-		color.g = textureData[1];
-		color.b = textureData[2];
-		color.a = textureData[3];
-
-		return gfx::Renderer::current()->getTextureManager()->createTexture2D(1, 1, &color);
-	} else if (textureData.is_string()) {
-		return loadTexture(textureData);
-	}
-}
-
 std::optional<DestructibleData> parseDestructible(Json& json) {
 	if (json.is_null()) {
 		return std::nullopt;
@@ -147,7 +132,8 @@ auto& loadPrefab(std::string_view name) {
 	prefab.shapeType = parseShapeType(prefab.json["shape"]);
 	prefab.destrDataOpt = parseDestructible(prefab.json["destructible"]);
 	handleShapeType(prefab.json["shape"], prefab);
-	prefab.texture = makePipeline(parseTexture(prefab.json));
+	prefab.textureNotPipeline = parseTexture(prefab.json, "texture");
+	prefab.texture = makeCameraPipeline(prefab.textureNotPipeline);
 	prefab.name = name;
 
 	return prefab;

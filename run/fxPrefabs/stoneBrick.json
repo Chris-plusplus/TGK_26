@@ -1,0 +1,22 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": "textures/stoneBrick.png",
+	"shape": {
+		"layer": 2,
+		"type": "box",
+		"width": 80,
+		"height": 40,
+		"material": {
+			"restitution": 0.25,
+			"friction": 10
+		},
+		"density": 5
+	},
+	"destructible": {
+		"healthMass": 50,
+		"destructionPoints": 100
+	},
+	"damageToOthersMultiplier": 5.5
+}

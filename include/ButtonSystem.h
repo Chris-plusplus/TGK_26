@@ -4,11 +4,10 @@
 
 using namespace arch;
 
+struct RepeatButton {
+	static constexpr bool flagComponent = true;
+};
+
 struct ButtonSystem {
-	template<class T>
-	void makeButton(Entity entity);
-
-	void makeButton(Entity entity);
-
-	void update(Scene& scene);
+	static void update();
 };

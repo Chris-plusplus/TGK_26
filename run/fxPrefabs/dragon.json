@@ -2,18 +2,18 @@
 	"body": {
 		"type": "dynamic"
 	},
-	"texture": [ 0, 0.75, 0, 1 ],
+	"texture": "textures/dragon.png",
 	"shape": {
 		"layer": 2,
 		"type": "circle",
 		"radius": 50,
 		"material": {
-			"restitution": 0.75
+			"restitution": 0.5
 		},
-		"density": 5
+		"density": 2.5
 	},
 	"destructible": {
-		"healthMass": 10,
+		"healthMass": 5,
 		"destructionPoints": 5000
 	},
 	"dragon": true

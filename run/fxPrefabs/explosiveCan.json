@@ -16,13 +16,14 @@
 
 	"points": 10000,
 	"explosion": {
-		"radius": 300,
-		"fallof": 300,
-		"strength": 1,
+		"radius": 200,
+		"fallof": 200,
+		"strength": 3,
 		"time": 1,
 		"damageModifier": 0.2,
 		"layers": [
 			2
 		]
-	}
+	},
+	"damageToOthersMultiplier": 2
 }

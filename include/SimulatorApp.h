@@ -10,6 +10,7 @@ using namespace arch;
 class SimulatorApp: public Application {
 public:
 	SimulatorApp() = default;
+	~SimulatorApp();
 
 	void init() override;
 	void update() override;

@@ -1,0 +1,63 @@
+{
+	"levelEndWindow": {
+		"position": [ 960, 540, -0.98 ],
+		"size": [ 640, 360 ],
+		"texture": "textures/statusWindow.png",
+		"victory": {
+			"text": {
+				"position": [ -275, 0, -0.99 ],
+				"font": "Minecraft",
+				"sizePx": 100,
+				"value": "You won!"
+			},
+			"scoreText": {
+				"value": "Score: {:.2f}",
+				"font": "Minecraft",
+				"sizePx": 50,
+				"position": [ -275, -100, -0.99 ]
+			},
+			"buttons": [
+				{
+					"repeatButton": {
+						"position": [ -100, -180, -0.99 ],
+						"texture": "textures/repeatButton.png",
+						"size": [ 100, 100 ],
+						"keycode": [ 82 ]
+					}
+				},
+				{
+					"nextLevelButton": {
+						"position": [ 100, -180, -0.99 ],
+						"texture": "textures/nextLevelButton.png",
+						"size": [ 100, 100 ],
+						"keycode": [ 32, 257 ]
+					}
+				}
+			]
+		},
+		"loss": {
+			"text": {
+				"position": [ -275, 0, -0.99 ],
+				"font": "Minecraft",
+				"sizePx": 100,
+				"value": "You lost!"
+			},
+			"scoreText": {
+				"value": "Score: {:.2f}",
+				"font": "Minecraft",
+				"sizePx": 50,
+				"position": [ -275, -100, -0.99 ]
+			},
+			"buttons": [
+				{
+					"repeatButton": {
+						"position": [ 0, -180, -0.99 ],
+						"texture": "textures/repeatButton.png",
+						"size": [ 100, 100 ],
+						"keycode": [ 82 ]
+					}
+				}
+			]
+		}
+	}
+}

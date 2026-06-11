@@ -4,6 +4,8 @@
 #include <SlingshotSystem.h>
 #include <ScoreSystem.h>
 #include <DragonSystem.h>
+#include <Button.h>
+#include <LevelManager.h>
 
 using namespace arch;
 
@@ -11,7 +13,17 @@ void EndingSystem::update() {
 	auto&& domain = scene::SceneManager::get()->currentScene()->domain();
 	auto&& levelState = domain.global<LevelState>();
 
+
+
 	if (levelState != LevelState::playing) {
+		for (auto&& [namedButton] : domain.view<NamedButton, Button::Clicked>().components()) {
+			if (namedButton.name == "repeatButton") {
+				LevelManager::reloadLevel();
+			} else if (namedButton.name == "nextLevelButton") {
+				LevelManager::nextLevel();
+			}
+		}
+
 		return;
 	}
 
@@ -25,6 +37,8 @@ void EndingSystem::update() {
 		if (domain.components<Can>().base().count() == 0) {
 			Logger::critical("You lost");
 			levelState = LevelState::lost;
+			auto windowJson = Json::parse(std::ifstream("settings/levelEnd.json"));
+			parseStatusWindow(windowJson, "levelEndWindow", "loss");
 			return;
 		}
 	} else {
@@ -34,5 +48,7 @@ void EndingSystem::update() {
 
 		Logger::info("You won with {} points", ScoreSystem::get());
 		levelState = LevelState::won;
+		auto windowJson = Json::parse(std::ifstream("settings/levelEnd.json"));
+		parseStatusWindow(windowJson, "levelEndWindow", "victory");
 	}
 }

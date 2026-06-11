@@ -1,0 +1,82 @@
+{
+	"background": "textures/wisla.jpg",
+	"logo": {
+		"texture": "textures/logoTransparent.png",
+		"position": [ 0, 300, -0.99 ],
+		"sizeMul": 1
+	},
+	"startButton": {
+		"position": [ 0, -50, -0.99 ],
+		"texture": "textures/playButton.png",
+		"size": [ 200, 200 ],
+		"keycode": [ 32, 257 ]
+	},
+	"cans": [
+		{
+			"prefab": "smashedCan",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.08175,
+			"size": [ 0.5, 3 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 1.5, 6 ]
+		},
+		{
+			"prefab": "speedCan",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.08175,
+			"size": [ 0.5, 3 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 1.5, 6 ]
+		},
+		{
+			"prefab": "explosiveCan",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.081751,
+			"size": [ 0.5, 3 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 1.5, 6 ]
+		},
+		{
+			"prefab": "dragon",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.081751,
+			"size": [ 1.5, 4.5 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 0.75, 3 ]
+		},
+		{
+			"prefab": "longPlank",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.081751,
+			"size": [ 1, 1 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 0.75, 3 ]
+		},
+		{
+			"prefab": "stoneBrick",
+			"x": [ -1600, 400 ],
+			"y": -650,
+			"angle": [ -60, -22.5 ],
+			"speed": [ 7.5, 17.5 ],
+			"gravity": 0.081751,
+			"size": [ 1, 1 ],
+			"chance": 0.005,
+			"rotationSpeed": [ 0.75, 3 ]
+		}
+	]
+}

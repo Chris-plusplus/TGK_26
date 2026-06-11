@@ -33,6 +33,10 @@ void ExplosionSystem::update() {
 			}
 
 			b2World_Explode(world.id, &explosion.explosionDef);
+			auto damageMultiplier = 1.f;
+			if (auto damageToOtherMultiplier = domain.tryGetComponent<DamageToOthers>(can)) {
+				damageMultiplier = damageToOtherMultiplier->multiplier;
+			}
 
 			for (auto&& [entity, body, vel, destructible] : state) {
 				auto velDiff = b2Body_GetLinearVelocity(body) - vel;
@@ -45,7 +49,7 @@ void ExplosionSystem::update() {
 					continue;
 				}
 
-				destructible->damage += energy;
+				destructible->damage += energy * damageMultiplier;
 			}
 
 			b2DestroyBody(body);

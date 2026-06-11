@@ -8,6 +8,7 @@
 #include <FxPrefabManager.h>
 #include <nlohmann/json.hpp>
 #include <archimedes/Gfx.h>
+#include <CollisionSystem.h>
 
 #include <box2d/base.h>
 #include <box2d/box2d.h>
@@ -21,6 +22,9 @@
 #include <DragonSystem.h>
 #include <EndingSystem.h>
 #include <ScoreSystem.h>
+#include <ButtonSystem.h>
+#include <glm/gtx/string_cast.hpp>
+#include <generator>
 
 using namespace arch;
 
@@ -70,11 +74,9 @@ void applyPrefab(b2WorldId world, Entity entity, std::string_view prefabName) {
 	applyPrefab(world, entity, *prefabOpt);
 }
 
-void parsePosition(Scene& scene, Entity entity, Json& json) {
-	auto position = json.value("position", std::vector<float>{0, 0});
-
+void parsePosition(Scene& scene, Entity entity, Json& json, float3 delta = {}) {
 	auto&& t = entity.addComponent<scene::components::TransformComponent>();
-	t.position = float3{position[0], position[1], 0.f};
+	t.position = parseVec(json, "position") + delta;
 
 	auto&& body = entity.getComponent<b2BodyId>();
 	b2Body_SetTransform(body, b2Vec2{t.position.x * scale, t.position.y * scale}, b2Body_GetRotation(body));
@@ -138,18 +140,33 @@ void parseAcceleration(Entity can, Json& json) {
 		return;
 	}
 
-	Ref<gfx::pipeline::Pipeline> textureOnHit = nullptr;
-	if (auto found = json.find("textureOnHit"); found != json.end()) {
-		textureOnHit = makePipeline(loadTexture(found.value()));
-	}
-
-	can.addComponent<Acceleration>(json.value("value", 0.f), std::move(textureOnHit));
+	auto&& acc = can.addComponent<Acceleration>();
+	acc.value = json.value("value", 0.f);
+	acc.textureOnUse = makeCameraPipeline(parseTexture(json, "textureOnUse"));
+	acc.foamTexture = parseTexture(json, "foamTexture");
+	acc.foamPipeline = makeCameraPipeline(acc.foamTexture);
+	acc.rng = std::minstd_rand(std::random_device{}());
+	acc.foamVelocityDist = decltype(acc.foamVelocityDist)(json.value("foamMinVelocity", 0.f), json.value("foamMaxVelocity", 0.f));
+	auto maxAngle = glm::radians(json.value("foamMaxAngle", 0.f));
+	acc.foamAngleDist = decltype(acc.foamAngleDist)(-maxAngle, maxAngle);
+	acc.foamRotationDist = decltype(acc.foamRotationDist)(glm::radians(0.f), glm::radians(360.f));
+	acc.foamTime = json.value("foamTime", 0.f);
+	acc.newFoams = json.value("newFoams", 0u);
+	acc.foamSpeedLoss = json.value("foamSpeedLoss", 0.f);
 }
 
 void parseDragon(Entity dragon, Json json) {
 	if (not json.is_null()) {
 		dragon.addComponent<Dragon>();
 	}
+}
+
+void parseDamageToOthers(Entity entity, Json& json) {
+	if (json.is_null()) {
+		return;
+	}
+
+	entity.addComponent<DamageToOthers>(json.value("damageToOthersMultiplier", 1.f));
 }
 
 void parseCans(Scene& scene, Json& json) {
@@ -177,6 +194,7 @@ void parseCans(Scene& scene, Json& json) {
 		parsePosition(scene, can, canJson);
 		updateScale(scene, can);
 		parseRotation(scene, can, canJson);
+		parseDamageToOthers(can, canJson);
 
 		auto explJson = prefab.json.value("explosion", Json());
 		parseExplosion(can, explJson);
@@ -188,12 +206,35 @@ void parseCans(Scene& scene, Json& json) {
 	}
 }
 
-void parseObjects(Scene& scene, Json& json) {
+std::generator<Json&> getObjectList(Json& levelObjectsJson, std::string_view group) {
+	auto& objectsJson = levelObjectsJson[group]["objects"];
+	if (objectsJson.is_string()) {
+		auto otherGroup = objectsJson.get<std::string>();
+		auto recursive = getObjectList(levelObjectsJson, otherGroup);
+		co_yield std::ranges::elements_of(recursive);
+	} else if (objectsJson.is_array()) {
+		for (auto&& objectJson : objectsJson) {
+			if (objectJson.is_string()) {
+				auto otherGroup = objectJson.get<std::string>();
+				auto recursive = getObjectList(levelObjectsJson, otherGroup);
+				co_yield std::ranges::elements_of(recursive);
+			} else {
+				co_yield objectJson;
+			}
+		}
+	} else {
+		Logger::debug("'objects' of group '{}' is invalid", group);
+	}
+}
+
+void parseObjects(Scene& scene, Json& json, Json& levelJson) {
 	auto&& world = scene.domain().global<b2WorldWrapper>();
 
 	for (auto&& [groupName, groupJson] : json.items()) {
 		auto prefabName = groupJson.value("prefab", "");
-		for (auto&& objectJson : groupJson["objects"]) {
+		auto basePosition = parseVec(groupJson, "basePosition", false);
+
+		auto makeObject = [&](Json& objectJson) {
 			auto object = scene.newEntity();
 			object.addComponent<LevelEntity>();
 
@@ -203,7 +244,7 @@ void parseObjects(Scene& scene, Json& json) {
 			if (objectPrefabName.is_null()) {
 				if (prefabName.empty()) {
 					Logger::error("Object in group '{}' without prefab!", groupName);
-					continue;
+					return;
 				} else {
 					applyPrefab(world.id, object, prefabName);
 					prefab = &*FxPrefabManager::get(prefabName);
@@ -213,33 +254,18 @@ void parseObjects(Scene& scene, Json& json) {
 				prefab = &*FxPrefabManager::get(objectPrefabName);
 			}
 
-			parsePosition(scene, object, objectJson);
+			parsePosition(scene, object, objectJson, basePosition);
 			updateScale(scene, object);
 			parseRotation(scene, object, objectJson);
+			parseDamageToOthers(object, objectJson);
 
 			parseDragon(object, prefab->json.value("dragon", Json()));
+		};
+
+		for (auto&& objectJson : getObjectList(levelJson["objects"], groupName)) {
+			makeObject(objectJson);
 		}
 	}
-
-	/*for (auto&& b : json["blocks"]) {
-		if (b.is_array()) {
-			parseBlocks(scene, b);
-		} else {
-			auto block = scene.newEntity();
-			block.addComponent<LevelEntity>();
-
-			auto prefabName = b["prefab"];
-			if (prefabName.is_null()) {
-				Logger::error("no prefab for can");
-				return;
-			}
-			applyPrefab(world.id, block, prefabName);
-
-			parsePosition(scene, block, b);
-			updateScale(scene, block);
-			parseRotation(scene, block, b);
-		}
-	}*/
 }
 
 void parseWalls(Scene& scene, Json& json) {
@@ -264,40 +290,116 @@ void parseWalls(Scene& scene, Json& json) {
 }
 
 void parseSlingshot(Json& json) {
+	auto&& scene = *scene::SceneManager::get()->currentScene();
+	auto&& domain = scene.domain();
 	auto position = json.value("position", std::vector<float>{0, 0});
 
-	auto slingshot = SlingshotSystem::placeSlingshot({position[0], position[1]});
+	auto slingshot = SlingshotSystem::placeSlingshot({position[0], position[1]}, json["texture"]);
 	slingshot.addComponent<LevelEntity>();
-	slingshot.addComponent<Slingshot>(
+	auto&& slingshotC = slingshot.addComponent<Slingshot>(
 		0,
 		json.value("canReloadTime", 1.f),
 		float3{position[0], position[1], 0},
 		json.value("maxPull", 100.f),
 		json.value("forceMultiplier", 1.f)
 	);
+	auto bandTexture = loadTexture(json["bandTexture"]);
+	auto bandPipeline = makeCameraPipeline(bandTexture);
+
+	for (auto&& bandPos : json["bandPosition"]) {
+		float dx = bandPos[0];
+		float dy = bandPos[1];
+
+		auto band = scene.newEntity();
+
+		band.addComponent(
+			scene::components::MeshComponent{
+				.mesh = defaultMesh(),
+				.pipeline = bandPipeline
+			}
+		);
+		band.addComponent(
+			scene::components::TransformComponent{
+				.position = slingshotC.centerPos + float3{dx, dy, 0},
+				.rotation = {},
+				.scale = {10, 0, 1}
+			}
+		);
+		band.addComponent<Band>();
+		band.addComponent<LevelEntity>();
+	}
 }
 
-struct LevelData {
-	std::string current;
-	std::string next;
-};
+void addBackground(Json& json) {
+	auto&& scene = *scene::SceneManager::get()->currentScene();
+	auto&& domain = scene.domain();
+
+	auto background = scene.newEntity();
+
+	auto&& texture = parseTexture(json, "background");
+	background.addComponent(
+		scene::components::MeshComponent{
+			.mesh = defaultMesh(),
+			.pipeline = makeScreenPipeline(texture)
+		}
+	);
+	auto&& monitor = *Monitor::get();
+	background.addComponent(
+		scene::components::TransformComponent{
+			.position = float3(monitor.originalSize() / 2, 0.f),
+			.rotation = {},
+			.scale = float3(texture->getWidth(), texture->getHeight(), 1)
+		}
+	);
+}
 
 void LevelManager::loadLevel(std::string_view filename) {
+	if (filename.empty()) return;
+
 	clearLevel();
+	FxPrefabManager::clear();
+
 	auto json = Json::parse(std::ifstream(filename.data()));
 	auto&& scene = *scene::SceneManager::get()->currentScene();
 	auto&& domain = scene.domain();
+	auto&& camera = domain.global<Camera>();
 	auto&& world = domain.global<b2WorldWrapper>();
+
+	addBackground(json);
 
 	//parseTempCan(scene, json["tempCan"]);
 	parseCans(scene, json["cans"]);
 	parseSlingshot(json["slingshot"]);
-	parseObjects(scene, json["objects"]);
+	parseObjects(scene, json["objects"], json);
 
-	domain.global<LevelData>().current = filename;
-	domain.global<LevelData>().next = json.value("next", "");
+	auto&& cameraJson = json["camera"];
+	auto&& cameraPos = cameraJson["position"];
+	camera.setPos({cameraPos[0], cameraPos[1]});
+	auto&& cameraExtents = cameraJson["extents"];
+	camera.setExtents({cameraExtents[0], cameraExtents[1]});
+
+	auto&& levelData = domain.global<LevelData>();
+	levelData.current = filename;
+	levelData.next = json.value("next", "");
+	levelData.cameraMinZoom = cameraJson["minZoom"];
+	levelData.cameraMaxZoom = cameraJson["maxZoom"];
+	levelData.zoomFactor = cameraJson.value("zoomFactor", 1.1f);
+
+	auto tempJson = cameraJson["minPosition"];
+	levelData.cameraMinPosition = float2(tempJson[0], tempJson[1]);
+
+	tempJson = cameraJson["maxPosition"];
+	levelData.cameraMaxPosition = float2(tempJson[0], tempJson[1]);
+
+	//Logger::debug("{} {} {} {}", levelData.cameraMinZoom, levelData.cameraMaxZoom, glm::to_string(levelData.cameraMinPosition), glm::to_string(levelData.cameraMaxPosition));
 
 	domain.global<LevelState>() = LevelState::playing;
+
+	// repeat button
+	auto repeatButtonJson = Json::parse(std::ifstream("settings/repeatButton.json"));
+	auto repeatButton = parseButton(repeatButtonJson, "repeatButton");
+	repeatButton.addComponent<LevelEntity>();
+	repeatButton.addComponent<RepeatButton>();
 }
 
 void LevelManager::nextLevel() {

@@ -1,112 +1,114 @@
 {
-	"next": "levels/2.json",
+	"background": "textures/wisla.jpg",
 
+	"next": "levels/2.json",
 	"slingshot": {
 		"position": [ 200, 200 ],
 		"maxPull": 150,
-		"forceMultiplier": 10.0,
-		"canReloadTime": 0.5
+		"forceMultiplier": 10.5,
+		"canReloadTime": 0.5,
+		"texture": "textures/slingshot.png",
+		"bandTexture": "textures/band.png",
+		"bandPosition": [
+			[ 50, -5 ],
+			[ -50, -5 ]
+		]
+	},
+
+	"camera": {
+		"position": [ 900, 500 ],
+		"extents": [ 1152, 648 ],
+		"maxZoom": 3,
+		"minZoom": 0.5,
+		"minPosition": [ 400, 250 ],
+		"maxPosition": [ 1500, 800 ],
+		"zoomFactor": 1.1
 	},
 
 	"cans": [
 		{
-			"prefab": "explosiveCan",
-			"position": [ 300, 150 ]
-		},
-		{
-			"prefab": "speedCan",
-			"position": [ 420, 150 ]
+			"prefab": "smashedCan",
+			"position": [ 100, 150 ]
 		},
 		{
 			"prefab": "smashedCan",
-			"position": [ 540, 150 ]
+			"position": [ -25, 150 ]
+		},
+		{
+			"prefab": "smashedCan",
+			"position": [ -150, 150 ]
 		}
 	],
 
 	"objects": {
-		"bottomPlanks": {
+		"baseSupport": {
+			"basePosition": [ 1515, 100 ],
+			"prefab": "longPlank",
+			"objects": [
+				{
+					"position": [ -90, 0 ],
+					"rotation": 90
+				},
+				{
+					"position": [ 0, 0 ],
+					"rotation": 90
+				},
+				{
+					"position": [ 90, 0 ],
+					"rotation": 90
+				}
+			]
+		},
+		"baseTop": {
+			"basePosition": [ 1515, 210 ],
+			"prefab": "longPlank",
+			"objects": [
+				{ "position": [ 0, 0 ] }
+			]
+		},
+
+		"floor": {
+			"basePosition": [ 1465, 320 ],
+			"prefab": "longPlank",
+			"objects": [
+				{
+					"position": [ 0, 0 ],
+					"rotation": 90
+				},
+				{
+					"position": [ 100, 0 ],
+					"rotation": 90
+				}
+			]
+		},
+		"roof": {
+			"basePosition": [ 1515, 430 ],
 			"prefab": "plank",
 			"objects": [
-				{
-					"position": [ 1350, 75 ]
-				},
-				{
-					"position": [ 1490, 75 ]
-				},
-				{
-					"position": [ 1630, 75 ]
-				}
+				{ "position": [ 0, 0 ] }
 			]
 		},
-		"bottomSupportPlanks": {
-			"prefab": "stonePlank",
+		"dragons": {
+			"basePosition": [ 1515, 250 ],
+			"prefab": "smallDragon",
 			"objects": [
-				{
-					"position": [ 1425, 245 ]
-				},
-				{
-					"position": [ 1555, 245 ]
-				}
+				{ "position": [ 0, 0 ] }
 			]
 		},
-		"topPlanks": {
-			"prefab": "plank",
-			"objects": [
-				{
-					"position": [ 1415, 160 ],
-					"rotation": 90
-				},
-				{
-					"position": [ 1565, 160 ],
-					"rotation": 90
-				}
-			]
-		},
-		"topSupportPlanks": {
-			"prefab": "stonePlank",
-			"objects": [
-				{
-					"position": [ 1490, 330 ],
-					"rotation": 90
-				}
-			]
-		},
-		"testBlock": {
-			"prefab": "dragon",
-			"objects": [
-				{
-					"position": [ 1490, 390 ]
-				}
-			]
-		},
-		"hWalls": {
+
+		"walls": {
+			"basePosition": [ 0, 0 ],
 			"prefab": "testWallGround",
 			"objects": [
-				{
-					"position": [ 900, -50 ]
-				},
-				{
-					"position": [ 900, 850 ]
-				}
+				{ "position": [ 0, -5000 ] }
 			]
 		},
-		"vWalls": {
+		"walls2": {
+			"basePosition": [ 0, 0 ],
 			"prefab": "testWallSide",
 			"objects": [
-				{
-					"position": [ 1850, 400 ]
-				},
-				{
-					"position": [ -50, 400 ]
-				}
-			]
-		},
-		"blockers": {
-			"prefab": "blocker",
-			"objects": [
-				{
-					"position": [ 900, -100 ]
-				}
+				{ "position": [ -7500, 0 ] },
+				{ "position": [ 7500, 0 ] }
 			]
 		}
 	}

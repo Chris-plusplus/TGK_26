@@ -1,5 +1,7 @@
 #include <Defaults.h>
 #include <EngineConfig.h>
+#include <archimedes/Camera.h>
+#include <archimedes/Scene.h>
 
 UBO ubo{glm::ortho(0.f, (float)windowWidth, 0.f, (float)windowHeight)};
 
@@ -7,9 +9,18 @@ float2 cameraDelta{};
 
 extern Ref<gfx::buffer::Buffer> ubobuf{};
 
+WindowFixedCamera::WindowFixedCamera(): Camera() {
+	auto monitor = *Monitor::get();
+	setPos(monitor.originalSize() / 2);
+	setExtents(monitor.originalSize() / 2);
+}
+
 // default uniform buffer with orthographic projection matrix
-Ref<gfx::buffer::Buffer> defaultUniformBuffer() {
-	return gfx::Renderer::getCurrent()->getBufferManager()->createBuffer(gfx::buffer::BufferType::uniform, &ubo, sizeof(ubo));
+Ref<gfx::buffer::Buffer> cameraUniformBuffer() {
+	return scene::SceneManager::get()->currentScene()->domain().global<Camera>().buffer();
+}
+Ref<gfx::buffer::Buffer> screenUniformBuffer() {
+	return scene::SceneManager::get()->currentScene()->domain().global<WindowFixedCamera>().buffer();
 }
 
 // default vertices for particles (makes rotating easier)

@@ -4,6 +4,7 @@
 #include <box2d/box2d.h>
 #include <nlohmann/json.hpp>
 #include <DestructionSystem.h>
+#include <archimedes/Gfx.h>
 
 using namespace arch;
 
@@ -22,6 +23,7 @@ struct FxPrefab {
 		b2Polygon polygon;
 	} shapeData;
 	std::optional<DestructibleData> destrDataOpt;
+	Ref<gfx::texture::Texture> textureNotPipeline;
 	Ref<gfx::pipeline::Pipeline> texture;
 	std::string name;
 

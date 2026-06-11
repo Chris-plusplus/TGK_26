@@ -2,16 +2,18 @@
 #include <SlingshotSystem.h>
 #include <Defaults.h>
 #include <CollisionSystem.h>
+#include <archimedes/Camera.h>
 
 void CanAngleSystem::update() {
 	auto&& scene = *scene::SceneManager::get()->currentScene();
 	auto&& domain = scene.domain();
+	auto&& camera = domain.global<Camera>();
 	auto&& [entity, slingshot] = domain.view<Slingshot>().all().front();
 
 	if (slingshot.state == slingshot.dragged) {
 		if (input::Mouse::left.down()) {
 			auto&& [canEntity, can, canos, t, body] = domain.view<Can, CanOnSlingshot, scene::components::TransformComponent, b2BodyId>().all().front();
-			auto dpos = slingshot.centerPos - float3(input::Mouse::pos(), 0);
+			auto dpos = slingshot.centerPos - float3(camera.screenToWorldPos(input::Mouse::pos()), 0);
 
 			float angle = std::atan2(dpos.y, dpos.x);
 

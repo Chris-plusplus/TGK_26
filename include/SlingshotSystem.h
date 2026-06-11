@@ -33,8 +33,12 @@ struct Launched {
 	static constexpr bool flagComponent = true;
 };
 
+struct Band {
+	static constexpr bool flagComponent = true;
+};
+
 struct SlingshotSystem {
-	static Entity placeSlingshot(float2 pos);
+	static Entity placeSlingshot(float2 pos, std::string_view texturePath);
 	static void moveCanStep(float dt);
 
 	static void update();

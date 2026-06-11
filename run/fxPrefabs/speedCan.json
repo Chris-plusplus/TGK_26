@@ -11,11 +11,18 @@
 			"restitution": 0.5,
 			"rollingResistance": 0.02
 		},
-		"density": 2
+		"density": 1
 	},
 	"acceleration": {
 		"value": 20,
-		"textureOnHit": "textures/acceleratingCanSmashed.png"
+		"textureOnUse": "textures/acceleratingCanSmashed.png",
+		"foamMaxAngle": 22.5,
+		"foamMinVelocity": 1,
+		"foamMaxVelocity": 10,
+		"foamTexture": "textures/foam.png",
+		"foamTime": 1,
+		"newFoams": 2,
+		"foamSpeedLoss": 0.99
 	},
 
 	"points": 10000

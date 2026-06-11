@@ -1,0 +1,11 @@
+{
+	"texture": [ 0, 0, 0, 1 ],
+	"body": {
+		"type": "static"
+	},
+	"shape": {
+		"type": "box",
+		"width": 150,
+		"height": 50
+	}
+}

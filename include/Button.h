@@ -1,17 +1,18 @@
 #pragma once
 
 #include <archimedes/Scene.h>
-#include <variant>
+#include <archimedes/Input.h>
+#include <archimedes/Camera.h>
+#include <archimedes/Mmath.h>
+#include <array>
 
 using namespace arch;
 
 struct Button {
-	enum Type {
-		circular,
-		rectangular
-	} type;
-
 	struct Clicked {
 		static constexpr bool flagComponent = true;
 	};
+
+	Camera* camera = nullptr;
+	std::array<u32, 14> keycodes{};
 };

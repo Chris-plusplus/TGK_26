@@ -3,11 +3,18 @@
 #include <Vertex.h>
 #include <archimedes/gfx/Renderer.h>
 #include <archimedes/scene/Components.h>
+#include <archimedes/Camera.h>
 
 using namespace arch;
 
+class WindowFixedCamera: public Camera {
+public:
+	WindowFixedCamera();
+};
+
 // returns default uniform buffer, containing orthographic projection matrix
-Ref<gfx::buffer::Buffer> defaultUniformBuffer();
+Ref<gfx::buffer::Buffer> cameraUniformBuffer();
+Ref<gfx::buffer::Buffer> screenUniformBuffer();
 
 // returns default vertices, for displaying sprites
 std::vector<Vertex>& defaultVertices();

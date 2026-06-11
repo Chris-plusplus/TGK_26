@@ -37,14 +37,14 @@ void CollisionSystem::update() {
 				(mA * mB) / (mA + mB));
 		float e = std::max(
 			b2Shape_GetRestitution(event.shapeIdA),
-			b2Shape_GetRestitution(event.shapeIdA)
+			b2Shape_GetRestitution(event.shapeIdB)
 		);
 
 		float energyLoss = reducedMass * 0.5f * event.approachSpeed * event.approachSpeed * (1.f - e * e);
 
-		auto handleEntity = [&](ecs::Entity entity) {
+		auto handleEntity = [&](ecs::Entity entity, float damageMultiplier) {
 			if (auto dOpt = domain.tryGetComponent<Destructible>(entity)) {
-				dOpt->damage += energyLoss;
+				dOpt->damage += energyLoss * damageMultiplier;
 			}
 
 			if (domain.hasComponent<Launched>(entity))
@@ -54,8 +54,17 @@ void CollisionSystem::update() {
 		auto eA = (ecs::Entity)(size_t)b2Body_GetUserData(bodyA);
 		auto eB = (ecs::Entity)(size_t)b2Body_GetUserData(bodyB);
 
-		handleEntity(eA);
-		handleEntity(eB);
+		auto aToBDamageMul = 1.f;
+		auto bToADamageMul = 1.f;
+		if (auto aDamageToOthersMul = domain.tryGetComponent<DamageToOthers>(eA)) {
+			aToBDamageMul = aDamageToOthersMul->multiplier;
+		}
+		if (auto bDamageToOthersMul = domain.tryGetComponent<DamageToOthers>(eB)) {
+			bToADamageMul = bDamageToOthersMul->multiplier;
+		}
+
+		handleEntity(eA, bToADamageMul);
+		handleEntity(eB, aToBDamageMul);
 	}
 	DestructionSystem::update();
 }

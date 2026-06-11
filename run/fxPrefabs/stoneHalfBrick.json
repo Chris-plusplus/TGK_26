@@ -1,0 +1,22 @@
+{
+	"body": {
+		"type": "dynamic"
+	},
+	"texture": "textures/stoneHalfBrick.png",
+	"shape": {
+		"layer": 2,
+		"type": "box",
+		"width": 40,
+		"height": 40,
+		"material": {
+			"restitution": 0.25,
+			"friction": 10
+		},
+		"density": 5
+	},
+	"destructible": {
+		"healthMass": 35,
+		"destructionPoints": 100
+	},
+	"damageToOthersMultiplier": 1.5
+}

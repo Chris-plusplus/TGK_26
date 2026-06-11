@@ -11,7 +11,7 @@ int main() {
 	auto engineConfig = arch::EngineConfig{
 		.windowWidth = (int)windowWidth,
 		.windowHeight = (int)windowHeight,
-		.windowTitle = "Epidemic Simulator",
+		.windowTitle = "Sober Students",
 		.backgroundColor = arch::Color(0, 0.5, 1, 1),
 		.renderingApi = arch::gfx::RenderingAPI::Nvrhi_VK
 	};
